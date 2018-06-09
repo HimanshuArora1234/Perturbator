@@ -31,6 +31,14 @@ class PerturbatorTest extends FlatSpec with Matchers {
     values.perturbate shouldNot equal(value)
   }
 
+  "Perturbator" should "perturbate a class Person with empty vector" in {
+    val person = Person("himanshu", 20, Vector())
+    val perturbatedPerson = person.perturbate
+    perturbatedPerson.name shouldNot equal(person.name)
+    perturbatedPerson.age should (be >= (person.age - (person.age * 0.1)).toInt and be <= (person.age + (person.age * 0.1)).toInt)
+    perturbatedPerson.data should equal(person.data)
+  }
+
   "Perturbator" should "perturbate a class Person with string vector" in {
     val person = Person("himanshu", 20, Vector("abc", "xyz", "pqr"))
     val perturbatedPerson = person.perturbate
@@ -41,6 +49,39 @@ class PerturbatorTest extends FlatSpec with Matchers {
 
   "Perturbator" should "perturbate a class Person with integer vector" in {
     val person = Person("himanshu", 20, Vector(10, 20, 30, 40, 50))
+    val perturbatedPerson = person.perturbate
+    perturbatedPerson.name shouldNot equal(person.name)
+    perturbatedPerson.age should (be >= (person.age - (person.age * 0.1)).toInt and be <= (person.age + (person.age * 0.1)).toInt)
+    perturbatedPerson.data shouldNot equal(person.data)
+  }
+
+  "Perturbator" should "perturbate a class Person with vector of Person[Int]" in {
+    val person = Person("himanshu", 20, Vector(
+      Person("himanshu", 20, Vector(10, 20, 30, 40, 50)),
+      Person("himanshu", 20, Vector(10, 20, 30, 40, 50))
+    ))
+    val perturbatedPerson = person.perturbate
+    perturbatedPerson.name shouldNot equal(person.name)
+    perturbatedPerson.age should (be >= (person.age - (person.age * 0.1)).toInt and be <= (person.age + (person.age * 0.1)).toInt)
+    perturbatedPerson.data shouldNot equal(person.data)
+  }
+
+  "Perturbator" should "perturbate a class Person with vector of Person[String]" in {
+    val person = Person("himanshu", 20, Vector(
+      Person("himanshu", 20, Vector("abc", "xyz", "pqr")),
+      Person("himanshu", 20, Vector("abc", "xyz", "pqr"))
+    ))
+    val perturbatedPerson = person.perturbate
+    perturbatedPerson.name shouldNot equal(person.name)
+    perturbatedPerson.age should (be >= (person.age - (person.age * 0.1)).toInt and be <= (person.age + (person.age * 0.1)).toInt)
+    perturbatedPerson.data shouldNot equal(person.data)
+  }
+
+  "Perturbator" should "perturbate a class Person with vector of Person[Nothing]" in {
+    val person = Person("himanshu", 20, Vector(
+      Person("himanshu", 20, Vector()),
+      Person("himanshu", 20, Vector())
+    ))
     val perturbatedPerson = person.perturbate
     perturbatedPerson.name shouldNot equal(person.name)
     perturbatedPerson.age should (be >= (person.age - (person.age * 0.1)).toInt and be <= (person.age + (person.age * 0.1)).toInt)

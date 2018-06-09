@@ -42,7 +42,7 @@ object PerturbatorImpl {
   }
 
   /**
-    * Perturbates a vector.
+    * Perturbates a vector types.
     *
     * @param value vector to be perturbed
     * @tparam T vector type

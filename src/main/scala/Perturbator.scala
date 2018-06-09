@@ -60,6 +60,14 @@ object Perturbator {
 
   implicit val stringVectorPerturbator: Perturbator[Vector[String]] = create(perturbateVector[String](_))
 
+  implicit def verctorPerturbator[A](implicit pert: Perturbator[A]): Perturbator[Vector[A]] = new Perturbator[Vector[A]] {
+    def perturbate(t: Vector[A]) = perturbateVector[A](t)
+  }
+
+  implicit val nothingVectorPerturbator: Perturbator[Vector[Nothing]] = new Perturbator[Vector[Nothing]] {
+    override def perturbate(value: Vector[Nothing]): Vector[Nothing] = value
+  }
+
   implicit val hnilParser: Perturbator[HNil] = create(_ => HNil)
 
   /**
@@ -69,5 +77,6 @@ object Perturbator {
     def perturbate = Perturbator[A].perturbate(a)
   }
 
-
 }
+
+
