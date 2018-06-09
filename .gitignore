@@ -1,2 +1,9 @@
 *.class
 *.log
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+target/
