@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/HimanshuArora1234/Perturbator.svg?branch=master)](https://travis-ci.org/HimanshuArora1234/Perturbator)
+
+
 # Perturbator
 
 The goal of this exercise is to explore ways to introduce little errors to values of various types.
