@@ -27,23 +27,57 @@ object Perturbator {
   import shapeless.Lazy
   import PerturbatorImpl._
 
+  /**
+    * Create Perturbator instance for given type.
+    *
+    * @param func perturbation function
+    * @tparam A type
+    * @return Perturbator[A
+    */
   private def create[A](func: A => A): Perturbator[A] = {
     new Perturbator[A] {
       def perturbate(value: A): A = func(value)
     }
   }
 
+  /**
+    * The `apply` method causes the Scala compiler to search for an implicit `Perturbator[A]`
+    *
+    * @param pert `Perturbator[A]` in implicit scope
+    * @tparam A type param
+    * @return Perturbator[A]
+    */
   def apply[A](implicit pert: Lazy[Perturbator[A]]): Perturbator[A] = pert.value
 
 
+  /**
+    * This causes the compiler to look for an implicit `Generic.Aux[A, R]` and `Perturbator[R]`
+    *
+    * @param generic to convert from a concrete type (e.g. a case class) to a generic
+    * @param perturbator
+    * @tparam A concrete type
+    * @tparam R Hlist
+    * @return Perturbator[A]
+    */
   implicit def genericPerturbator[A, R <: HList](
                                                   implicit
                                                   generic: Generic.Aux[A, R],
-                                                  parser: Lazy[Perturbator[R]]
+                                                  perturbator: Lazy[Perturbator[R]]
                                                 ): Perturbator[A] = {
-    create(arg => generic.from(parser.value.perturbate(generic.to(arg))))
+    create(arg => generic.from(perturbator.value.perturbate(generic.to(arg))))
   }
 
+  /**
+    * This causes the compiler to find the Perturbator of `HList`. Implicit Perturbator[H] is satisfied by the
+    * implicit values that handle primitive types defined below and the Perturbator[T] is handled recursively
+    * until the terminal HNil case is reached.
+    *
+    * @param hPerturbator perturbator for head of HList
+    * @param tPerturbator perturbator for tail of HList
+    * @tparam H head of HList
+    * @tparam T tail of HList
+    * @return Perturbator[H :: T]
+    */
   implicit def hlistPerturbator[H, T <: HList](
                                                 implicit
                                                 hPerturbator: Lazy[Perturbator[H]],
@@ -52,23 +86,18 @@ object Perturbator {
     create(arg => hPerturbator.value.perturbate(arg.head) :: tPerturbator.perturbate(arg.tail))
   }
 
+
+  // Instances for Perturbator type class
+
   implicit val intPerturbator: Perturbator[Int] = create(perturbateInt(_))
 
   implicit val stringPerturbator: Perturbator[String] = create(perturbateString(_))
 
-  implicit val intVectorPerturbator: Perturbator[Vector[Int]] = create(perturbateVector[Int](_))
+  implicit def vectorPerturbator[A](implicit pert: Perturbator[A]): Perturbator[Vector[A]] = create(perturbateVector[A](_))
 
-  implicit val stringVectorPerturbator: Perturbator[Vector[String]] = create(perturbateVector[String](_))
+  implicit val nothingVectorPerturbator: Perturbator[Vector[Nothing]] = create(value => value)
 
-  implicit def verctorPerturbator[A](implicit pert: Perturbator[A]): Perturbator[Vector[A]] = new Perturbator[Vector[A]] {
-    def perturbate(t: Vector[A]) = perturbateVector[A](t)
-  }
-
-  implicit val nothingVectorPerturbator: Perturbator[Vector[Nothing]] = new Perturbator[Vector[Nothing]] {
-    override def perturbate(value: Vector[Nothing]): Vector[Nothing] = value
-  }
-
-  implicit val hnilParser: Perturbator[HNil] = create(_ => HNil)
+  implicit val hnilPerturbator: Perturbator[HNil] = create(_ => HNil)
 
   /**
     * Implicit conversion to call perturbate directly on value like `value.perturbate`

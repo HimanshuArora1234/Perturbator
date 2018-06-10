@@ -16,5 +16,5 @@ Implement this functionality for all possible case classes which fields are of a
 
 ## Implementation
 
-This project uses Scala **type class** and **Shapeless's automatic type class derivation**. 
+This project uses Scala **type class** and **Shapeless's automatic derivation of type class instances**.
 
