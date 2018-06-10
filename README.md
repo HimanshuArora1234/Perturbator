@@ -12,7 +12,7 @@ There are many possible definitions of an error given a value of a particular ty
 
 Implement this functionality for all possible case classes which fields are of a type which values can be perturbated, potentially recursively. This is done by perturbating each field.
 
---------------------------
+-------------------------------------------------------------------
 
 ## Implementation
 
