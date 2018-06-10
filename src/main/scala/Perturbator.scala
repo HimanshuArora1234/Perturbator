@@ -54,7 +54,7 @@ object Perturbator {
     * This causes the compiler to look for an implicit `Generic.Aux[A, R]` and `Perturbator[R]`
     *
     * @param generic to convert from a concrete type (e.g. a case class) to a generic
-    * @param perturbator
+    * @param perturbator perturbator of Hlist
     * @tparam A concrete type
     * @tparam R Hlist
     * @return Perturbator[A]
